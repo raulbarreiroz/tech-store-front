@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://tech-store-back.onrender.com"; // "http://localhost:3001";
+const API_URL = "http://localhost:3001"; // "https://tech-store-back.onrender.com";
 
 export const fetchProductos = async () => {
   const response = await axios.get(`${API_URL}/producto/activo`);
