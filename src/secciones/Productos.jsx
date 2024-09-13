@@ -33,12 +33,14 @@ const Productos = ({
           <Table style={{ border: "1px solid grey" }}>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Descripcion</TableCell>
-                <TableCell>Fecha Creacion</TableCell>
-                <TableCell>Editar</TableCell>
-                <TableCell>Eliminar</TableCell>
+                <TableCell align="center">ID</TableCell>
+                <TableCell align="center">Nombre</TableCell>
+                <TableCell align="center">Descripcion</TableCell>
+                <TableCell align="center">Precio</TableCell>
+                <TableCell align="center">Imagen</TableCell>
+                <TableCell align="center">Fecha Creacion</TableCell>
+                <TableCell align="center">Editar</TableCell>
+                <TableCell align="center">Eliminar</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -56,11 +58,27 @@ const Productos = ({
                 );
                 return (
                   <TableRow>
-                    <TableCell>{producto.idProducto}</TableCell>
-                    <TableCell>{producto.nombre}</TableCell>
-                    <TableCell>{producto.descripcion || "-"}</TableCell>
-                    <TableCell>{fecha}</TableCell>
-                    <TableCell>
+                    <TableCell align="center">{producto.idProducto}</TableCell>
+                    <TableCell align="center">{producto.nombre}</TableCell>
+                    <TableCell align="center">
+                      {producto.descripcion || "-"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {producto.precio || "-"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {producto?.imagen ? (
+                        <img
+                          src={`data:image/jpeg;base64,${producto.imagen}`}
+                          alt={`${producto.imagen}`}
+                          style={{ width: "100px", height: "auto" }}
+                        />
+                      ) : (
+                        <>-</>
+                      )}
+                    </TableCell>
+                    <TableCell align="center">{fecha}</TableCell>
+                    <TableCell align="center">
                       <IconButton
                         onClick={(e) => {
                           setModoEdicion("EDITAR");
@@ -77,7 +95,7 @@ const Productos = ({
                         <EditIcon />
                       </IconButton>
                     </TableCell>
-                    <TableCell>
+                    <TableCell align="center">
                       <IconButton
                         onClick={(e) => {
                           setProductoSeleccionado({

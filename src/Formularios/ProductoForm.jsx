@@ -8,6 +8,7 @@ import {
   TextField,
   Button,
   Typography,
+  Box,
 } from "@mui/material";
 
 import { Chip, Stack } from "@mui/material";
@@ -48,7 +49,7 @@ const ProductoForm = ({
     }
   }, [open, categoriasSeleccionadas]);
 
-  const handleSubmit = async (e) => {    
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (modoEdicion === "INSERTAR") {
       await createProducto({
@@ -106,6 +107,39 @@ const ProductoForm = ({
             margin="normal"
             multiline={true}
           />
+          <Box display="flex" gap={2} alignItems="center">
+            <TextField
+              label="Precio"
+              name="precio"
+              value={formData.precio}
+              onChange={handleChange}
+              fullWidth
+              margin="normal"
+              type="number"
+              inputProps={{
+                step: "0.01", // Controla los decimales
+              }}
+            />
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                      const base64String = reader.result.split(",")[1]; // Get Base64 string
+                      const nuevoProducto = { ...producto };
+                      nuevoProducto.imagen = base64String;
+                      setProducto(nuevoProducto);
+                    };
+                  }
+                }}
+              />
+            </div>
+          </Box>
           {modoEdicion !== "INSERTAR" && (
             <TextField
               label="Fecha Creacion"

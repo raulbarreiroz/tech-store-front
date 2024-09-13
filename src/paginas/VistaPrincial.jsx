@@ -36,6 +36,8 @@ const VistaPrincipal = () => {
     nombre: "",
     descripcion: "",
     fechaCreacion: "",
+    imagen: "",
+    precio: undefined
   });
   const [mostrarDialogoConfirmacion, setMostrarDialogoConfirmacion] =
     useState(false);
@@ -114,6 +116,8 @@ const VistaPrincipal = () => {
       nombre: "",
       descripcion: "",
       fechaCreacion: "",
+      imagen: undefined,
+      precio: undefined
     });
     setCategoriasSeleccionadas([]);
     setModoEdicion("INSERTAR");
@@ -140,6 +144,8 @@ const VistaPrincipal = () => {
         descripcion: productoSeleccionado.descripcion,
         fechaCreacion: productoSeleccionado.fechaCreacion,
         categorias: productoSeleccionado?.categorias || [],
+        imagen: productoSeleccionado?.imagen,
+        precio: productoSeleccionado?.precio 
       });
 
       setCategoriasSeleccionadas(productoSeleccionado?.categorias || []);
