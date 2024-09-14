@@ -15,13 +15,16 @@ const DialogConfirmacion = ({
   productoSeleccionado,
   seccionEnUso,
   categoriaSeleccionada,
+  setMostrarDialogoCarga,
 }) => {
   const handleConfirmDelete = (e) => {
+    setMostrarDialogoCarga(true);
     e.preventDefault();
-
     if (seccionEnUso === "PRODUCTOS") {
       deleteProducto(productoSeleccionado);
     } else if (seccionEnUso === "CATEGORIAS") {
+      console.log("deleting categoria");
+      console.log(categoriaSeleccionada);
       deleteCategoria(categoriaSeleccionada);
     }
 

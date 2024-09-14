@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -11,6 +10,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { ImageNotSupported } from "@mui/icons-material";
 
 const Productos = ({
   setProductoSeleccionado,
@@ -22,15 +22,20 @@ const Productos = ({
   return (
     <div
       style={{
-        height: "calc(100vh - 20vh)",
+        height: "calc(72.5vh)",
         width: "calc(100vw - 2vw)",
         padding: "1vh 1vw",
-        overflowY: "scroll",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      {productos?.length >= 0 && (
-        <TableContainer component={Paper}>
-          <Table style={{ border: "1px solid grey" }}>
+      {productos?.length > 0 ? (
+        <TableContainer
+          sx={{ maxHeight: "100%", border: "1px solid grey" }}
+          component={Paper}
+        >
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell align="center">ID</TableCell>
@@ -38,6 +43,7 @@ const Productos = ({
                 <TableCell align="center">Descripcion</TableCell>
                 <TableCell align="center">Precio</TableCell>
                 <TableCell align="center">Imagen</TableCell>
+                <TableCell align="center">Categorias</TableCell>
                 <TableCell align="center">Fecha Creacion</TableCell>
                 <TableCell align="center">Editar</TableCell>
                 <TableCell align="center">Eliminar</TableCell>
@@ -52,10 +58,6 @@ const Productos = ({
                 const fecha = `${year}/${
                   month.length === 1 ? "0" + month : month
                 }/${day.length === 1 ? "0" + day : day}`;
-
-                const categorias = producto?.categorias?.map(
-                  (categoria) => categoria?.nombre_categoria
-                );
                 return (
                   <TableRow>
                     <TableCell align="center">{producto.idProducto}</TableCell>
@@ -74,7 +76,20 @@ const Productos = ({
                           style={{ width: "100px", height: "auto" }}
                         />
                       ) : (
-                        <>-</>
+                        <ImageNotSupported />
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      {producto?.categorias?.length > 0 ? (
+                        <ul>
+                          {producto?.categorias
+                            ?.map((cat) => cat?.nombre)
+                            ?.map((nombre) => (
+                              <li>{nombre}</li>
+                            ))}
+                        </ul>
+                      ) : (
+                        "Sin Categorías"
                       )}
                     </TableCell>
                     <TableCell align="center">{fecha}</TableCell>
@@ -84,10 +99,12 @@ const Productos = ({
                           setModoEdicion("EDITAR");
                           setProductoSeleccionado({
                             idProducto: producto?.idProducto,
-                            nombre: producto.nombre,
-                            descripcion: producto.descripcion,
+                            nombre: producto?.nombre,
+                            descripcion: producto?.descripcion,
                             fechaCreacion: fecha,
                             categorias: producto?.categorias,
+                            imagen: producto?.imagen,
+                            precio: producto?.precio,
                           });
                           handleOpenForm(producto);
                         }}
@@ -100,10 +117,12 @@ const Productos = ({
                         onClick={(e) => {
                           setProductoSeleccionado({
                             idProducto: producto?.idProducto,
-                            nombre: producto.nombre,
-                            descripcion: producto.descripcion,
+                            nombre: producto?.nombre,
+                            descripcion: producto?.descripcion,
                             fechaCreacion: fecha,
                             categorias: producto?.categorias,
+                            imagen: producto?.imagen,
+                            precio: producto?.precio,
                           });
                           setMostrarDialogoConfirmacion(true);
                         }}
@@ -117,6 +136,8 @@ const Productos = ({
             </TableBody>
           </Table>
         </TableContainer>
+      ) : (
+        "No existen productos registrados"
       )}
     </div>
   );

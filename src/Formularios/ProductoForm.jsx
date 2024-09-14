@@ -1,5 +1,5 @@
-// src/components/productoForm.js
-import React, { useState, useEffect, useRef } from "react";
+// src/components/productoSeleccionadoForm.js
+import React, { useRef } from "react";
 import {
   Dialog,
   DialogActions,
@@ -9,23 +9,28 @@ import {
   Button,
   Typography,
   Box,
+  IconButton,
 } from "@mui/material";
 
 import { Chip, Stack } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { createProducto, updateProducto } from "../servicios/api";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
+import AddIcon from "@mui/icons-material/Add";
 
 const ProductoForm = ({
   open,
   onClose,
-  producto,
   modoEdicion,
   categorias,
-  formData,
-  setFormData,
-  categoriasSeleccionadas,
-  setProducto,
+  productoSeleccionado,
+  setProductoSeleccionado,
+  setMostrarDialogoCarga,
+  setActualizarProductos,
 }) => {
+  const imagenInputRef = useRef(undefined);  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -34,65 +39,64 @@ const ProductoForm = ({
       (name === "nombre" && value?.length <= 49) ||
       (name === "descripcion" && value?.length <= 99)
     ) {
-      setFormData({
-        ...formData,
+      setProductoSeleccionado({
+        ...productoSeleccionado,
         [name]: value,
       });
     }
   };
 
-  useEffect(() => {
-    if (open) {
-      if (categoriasSeleccionadas) {
-        console.log(categoriasSeleccionadas);
-      }
-    }
-  }, [open, categoriasSeleccionadas]);
-
   const handleSubmit = async (e) => {
+    setMostrarDialogoCarga(true);
     e.preventDefault();
     if (modoEdicion === "INSERTAR") {
       await createProducto({
-        ...formData,
-        categorias: categoriasSeleccionadas,
+        ...productoSeleccionado,
       });
     } else if (modoEdicion === "EDITAR") {
       await updateProducto({
-        ...formData,
-        categorias: categoriasSeleccionadas,
+        ...productoSeleccionado,
       });
     }
 
     onClose();
+    setActualizarProductos(true);
   };
 
   const handleChipClick = (chip) => {
-    const nuevoProducto = { ...producto };
+    const antiguoproductoSeleccionado = { ...productoSeleccionado };    
+
+    let nuevasCategorias = antiguoproductoSeleccionado?.categorias || [];
     if (
-      producto?.categorias
+      antiguoproductoSeleccionado?.categorias
         ?.map((cat) => cat?.idCategoria)
         ?.includes(chip?.idCategoria)
     ) {
-      nuevoProducto.categorias = categoriasSeleccionadas?.filter(
+      nuevasCategorias = antiguoproductoSeleccionado?.categorias?.filter(
         (cat) => cat?.idCategoria !== chip?.idCategoria
       );
     } else {
-      nuevoProducto.categorias = [...categoriasSeleccionadas, chip];
+      nuevasCategorias = [...antiguoproductoSeleccionado?.categorias, chip];
     }
-    setProducto(nuevoProducto);
+    setProductoSeleccionado({
+      ...antiguoproductoSeleccionado,
+      categorias: nuevasCategorias,
+    });
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        {producto ? "Editar productoo" : "Crear productoo"}
+        {productoSeleccionado
+          ? "Editar productoSeleccionadoo"
+          : "Crear productoSeleccionadoo"}
       </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Nombre"
             name="nombre"
-            value={formData.nombre}
+            value={productoSeleccionado?.nombre}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -101,7 +105,7 @@ const ProductoForm = ({
           <TextField
             label="Descripcion"
             name="descripcion"
-            value={formData.descripcion}
+            value={productoSeleccionado?.descripcion}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -111,7 +115,7 @@ const ProductoForm = ({
             <TextField
               label="Precio"
               name="precio"
-              value={formData.precio}
+              value={productoSeleccionado?.precio}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -119,32 +123,107 @@ const ProductoForm = ({
               inputProps={{
                 step: "0.01", // Controla los decimales
               }}
+              style={{
+                width: "70%",
+              }}
             />
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => {
-                      const base64String = reader.result.split(",")[1]; // Get Base64 string
-                      const nuevoProducto = { ...producto };
-                      nuevoProducto.imagen = base64String;
-                      setProducto(nuevoProducto);
-                    };
-                  }
+
+            <div
+              style={{
+                display: "flex",
+                width: "30%",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  display: "none",
                 }}
-              />
+              >
+                <input
+                  ref={imagenInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.readAsDataURL(file);
+                      reader.onload = () => {
+                        const base64String = reader.result.split(",")[1]; // Get Base64 string
+                        const nuevoproductoSeleccionado = {
+                          ...productoSeleccionado,
+                        };
+                        nuevoproductoSeleccionado.imagen = base64String;
+                        setProductoSeleccionado(nuevoproductoSeleccionado);
+                      };
+                    }
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  width: "100px",
+                  height: "79px",
+                }}
+              >
+                {productoSeleccionado?.imagen ? (
+                  <img
+                    src={`data:image/jpeg;base64,${productoSeleccionado.imagen}`}
+                    alt={`${productoSeleccionado.imagen}`}
+                    style={{ width: "100px", height: "100%" }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      height: "79px",
+                    }}
+                  >
+                    <ImageNotSupportedIcon
+                      fontSize="large"
+                      style={{ width: "100px", height: "79px" }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <IconButton
+                  onClick={(e) => {
+                    imagenInputRef.current.click();
+                  }}
+                >
+                  {productoSeleccionado?.imagen ? <EditIcon /> : <AddIcon />}
+                </IconButton>
+
+                <IconButton
+                  disabled={productoSeleccionado?.imagen ? false : true}
+                  onClick={(e) => {
+                    setProductoSeleccionado({
+                      ...productoSeleccionado,
+                      imagen: "",
+                    });
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
             </div>
           </Box>
           {modoEdicion !== "INSERTAR" && (
             <TextField
               label="Fecha Creacion"
               name="fechaCreacion"
-              value={formData.fechaCreacion}
+              value={productoSeleccionado?.fechaCreacion}
               onChange={handleChange}
               fullWidth
               disabled={true}
@@ -168,14 +247,14 @@ const ProductoForm = ({
                   key={cat?.idCategoria}
                   onClick={() => handleChipClick(cat)}
                   color={
-                    producto?.categorias
+                    productoSeleccionado?.categorias
                       ?.map((cat) => cat?.idCategoria)
                       .includes(cat?.idCategoria)
                       ? "success"
                       : "default"
                   }
                   icon={
-                    producto?.categorias
+                    productoSeleccionado?.categorias
                       ?.map((cat) => cat?.idCategoria)
                       .includes(cat?.idCategoria) ? (
                       <CheckCircleIcon />
@@ -191,12 +270,19 @@ const ProductoForm = ({
             <Button
               type="submit"
               color="primary"
-              disabled={formData?.nombre?.trim() === "" ? true : false}
+              disabled={
+                productoSeleccionado?.nombre?.trim() === "" ? true : false
+              }
               onClick={handleSubmit}
             >
               {modoEdicion === "INSERTAR" ? "Guardar" : "Editar"}
             </Button>
-            <Button onClick={onClose} color="secondary">
+            <Button
+              onClick={(e) => {
+                onClose();
+              }}
+              color="secondary"
+            >
               Cancelar
             </Button>
           </DialogActions>

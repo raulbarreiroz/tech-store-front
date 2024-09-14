@@ -22,31 +22,55 @@ const VistaPrincipal = () => {
   const [actualizarProductos, setActualizarProductos] = useState(true);
   const [actualizarCategorias, setActualizarCategorias] = useState(true);
   const [seccionEnUso, setSeccionEnUso] = useState("PRODUCTOS");
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isFormOpenCategoria, setIsFormOpenCategoria] = useState(false);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(undefined);
-  const [productoSeleccionado, setProductoSeleccionado] = useState(undefined);
   const [modoEdicion, setModoEdicion] = useState("INSERTAR");
-  const [categorias, setCategorias] = useState(undefined);
-  const [productos, setProductos] = useState([]);
-  const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState([]);
-  const [formData, setformData] = useState({
-    idCategoria: "",
-    idProducto: "",
+  const [isFormProductoOpen, setisFormProductoOpen] = useState(false);
+  const [isFormCategoriaOpen, setisFormCategoriaOpen] = useState(false);
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState({
+    idCategoria: undefined,
     nombre: "",
     descripcion: "",
-    fechaCreacion: "",
-    imagen: "",
-    precio: undefined
+    fechaCreacion: undefined,
+  });
+  const [productos, setProductos] = useState([]);
+  const [productoSeleccionado, setProductoSeleccionado] = useState({
+    idProducto: undefined,
+    nombre: "",
+    descripcion: "",
+    fechaCreacion: undefined,
+    imagen: undefined,
+    precio: 0,
+    categorias: [],
   });
   const [mostrarDialogoConfirmacion, setMostrarDialogoConfirmacion] =
     useState(false);
   const [mostrarDialogoCarga, setMostrarDialogoCarga] = useState(false);
 
+  function resetProductoSelecionado() {
+    setProductoSeleccionado({
+      idProducto: undefined,
+      nombre: "",
+      descripcion: "",
+      fechaCreacion: undefined,
+      imagen: undefined,
+      precio: 0,
+      categorias: [],
+    });
+  }
+
+  function resetCategoriaSeleccionada() {
+    setCategoriaSeleccionada({
+      idCategoria: undefined,
+      nombre: "",
+      descripcion: "",
+      fechaCreacion: undefined,
+    });
+  }
+
   useEffect(() => {
-    console.log("categoriaSeleccionada");
-    console.log(categoriaSeleccionada);
-  }, [categoriaSeleccionada]);
+    console.log("actualizarProductos");
+    console.log(actualizarProductos);
+  }, [actualizarProductos]);
 
   useEffect(() => {
     const getProductos = async () => {
@@ -64,6 +88,7 @@ const VistaPrincipal = () => {
     };
 
     if (actualizarProductos) {
+      resetProductoSelecionado();
       setProductos([]);
       getProductos();
     }
@@ -85,6 +110,7 @@ const VistaPrincipal = () => {
     };
 
     if (actualizarCategorias) {
+      resetCategoriaSeleccionada();
       setCategorias([]);
       getCategorias();
     }
@@ -92,11 +118,11 @@ const VistaPrincipal = () => {
 
   // handlers
   const handleOpenForm = () => {
-    setIsFormOpen(true);
+    setisFormProductoOpen(true);
   };
 
   const handleOpenFormCategoria = () => {
-    setIsFormOpenCategoria(true);
+    setisFormCategoriaOpen(true);
   };
 
   const handleCloseDialogoConfirmacion = (e) => {
@@ -109,59 +135,26 @@ const VistaPrincipal = () => {
   };
 
   const handleCloseFormProducto = () => {
-    setIsFormOpen(false);
-    setformData({
-      idProducto: undefined,
-      idCategoria: undefined,
-      nombre: "",
-      descripcion: "",
-      fechaCreacion: "",
-      imagen: undefined,
-      precio: undefined
-    });
-    setCategoriasSeleccionadas([]);
+    setisFormProductoOpen(false);
     setModoEdicion("INSERTAR");
-    setActualizarProductos(true);
   };
 
-  const handleCloseFormProductoCategoria = () => {
-    setIsFormOpenCategoria(false);
-    setformData({
-      idCategoria: undefined,
-      nombre: "",
-      descripcion: "",
-      fechaCreacion: "",
-    });
+  const handleCloseFormCategoria = () => {
+    setisFormCategoriaOpen(false);
+    resetCategoriaSeleccionada();
     setModoEdicion("INSERTAR");
-    setActualizarCategorias(true);
   };
 
-  useEffect(() => {
-    if (productoSeleccionado) {
-      setformData({
-        idProducto: productoSeleccionado.idProducto,
-        nombre: productoSeleccionado.nombre,
-        descripcion: productoSeleccionado.descripcion,
-        fechaCreacion: productoSeleccionado.fechaCreacion,
-        categorias: productoSeleccionado?.categorias || [],
-        imagen: productoSeleccionado?.imagen,
-        precio: productoSeleccionado?.precio 
-      });
-
-      setCategoriasSeleccionadas(productoSeleccionado?.categorias || []);
+  const iconButtonClickHandler = (e) => {
+    e?.preventDefault();
+    if (seccionEnUso === "PRODUCTOS") {
+      resetProductoSelecionado();
+      setisFormProductoOpen(true);
+    } else if (seccionEnUso === "CATEGORIAS") {
+      resetCategoriaSeleccionada();
+      setisFormCategoriaOpen(true);
     }
-  }, [productoSeleccionado]);
-
-  useEffect(() => {
-    if (categoriaSeleccionada) {
-      setformData({
-        idCategoria: categoriaSeleccionada.idCategoria,
-        nombre: categoriaSeleccionada.nombre,
-        descripcion: categoriaSeleccionada.descripcion,
-        fechaCreacion: categoriaSeleccionada.fechaCreacion,
-      });
-    }
-  }, [categoriaSeleccionada]);
+  };
 
   return (
     <div id="main-id">
@@ -171,14 +164,22 @@ const VistaPrincipal = () => {
             position="static"
             style={{
               height: "18vh",
+              margin: "0 0 5vh 0",
             }}
           >
-            <Toolbar>
+            <Toolbar
+              style={{
+                padding: "0 3vw",
+              }}
+            >
               <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
                 Tech store
               </Typography>
               <Button
-                color="inherit"
+                style={{
+                  backgroundColor: "white",
+                }}
+                color="primary"
                 component={Link}
                 to="/productos"
                 onClick={(e) => {
@@ -189,7 +190,11 @@ const VistaPrincipal = () => {
                 Productos
               </Button>
               <Button
-                color="inherit"
+                style={{
+                  backgroundColor: "white",
+                  marginLeft: "1vw",
+                }}
+                color="primary"
                 component={Link}
                 to="/categorias"
                 onClick={(e) => {
@@ -214,14 +219,7 @@ const VistaPrincipal = () => {
               Gestor de inventario: {seccionEnUso}
               <IconButton
                 style={{ marginLeft: "1vw", backgroundColor: "white" }}
-                onClick={(e) => {
-                  e?.preventDefault();
-                  if (seccionEnUso === "PRODUCTOS") {
-                    setIsFormOpen(true);
-                  } else {
-                    setIsFormOpenCategoria(true);
-                  }
-                }}
+                onClick={iconButtonClickHandler}
               >
                 <AddIcon />
               </IconButton>
@@ -232,8 +230,8 @@ const VistaPrincipal = () => {
               path="/productos"
               element={
                 <Productos
-                  isFormOpen={isFormOpen}
-                  setIsFormOpen={setIsFormOpen}
+                  isFormProductoOpen={isFormProductoOpen}
+                  setisFormProductoOpen={setisFormProductoOpen}
                   setProductoSeleccionado={setProductoSeleccionado}
                   handleOpenForm={handleOpenForm}
                   productoSeleccionado={productoSeleccionado}
@@ -247,8 +245,8 @@ const VistaPrincipal = () => {
               path="/categorias"
               element={
                 <Categorias
-                  isFormOpen={isFormOpenCategoria}
-                  setIsFormOpen={setIsFormOpenCategoria}
+                  isFormCategoriaOpen={isFormCategoriaOpen}
+                  setisFormCategoriaOpen={isFormCategoriaOpen}
                   setCategoriaSeleccionada={setCategoriaSeleccionada}
                   handleOpenForm={handleOpenFormCategoria}
                   categoriaSeleccionada={categoriaSeleccionada}
@@ -264,28 +262,27 @@ const VistaPrincipal = () => {
       </div>
       {
         <ProductoForm
-          open={isFormOpen}
+          open={isFormProductoOpen}
           onClose={handleCloseFormProducto}
-          producto={productoSeleccionado}
+          productoSeleccionado={productoSeleccionado}
+          setProductoSeleccionado={setProductoSeleccionado}
           categorias={categorias}
           modoEdicion={modoEdicion}
-          formData={formData}
-          setFormData={setformData}
-          categoriasSeleccionadas={categoriasSeleccionadas}
-          setCategoriasSeleccionadas={setCategoriasSeleccionadas}
           setProducto={setProductoSeleccionado}
           setMostrarDialogoCarga={setMostrarDialogoCarga}
+          setActualizarProductos={setActualizarProductos}
         />
       }
       {
         <CategoriaForm
-          open={isFormOpenCategoria}
-          onClose={handleCloseFormProductoCategoria}
-          categoria={categoriaSeleccionada}
+          open={isFormCategoriaOpen}
+          onClose={handleCloseFormCategoria}
           categorias={categorias}
           modoEdicion={modoEdicion}
-          formData={formData}
-          setFormData={setformData}
+          categoriaSeleccionada={categoriaSeleccionada}
+          setCategoriaSeleccionada={setCategoriaSeleccionada}
+          setActualizarCategorias={setActualizarCategorias}
+          setMostrarDialogoCarga={setMostrarDialogoCarga}
         />
       }
       {
@@ -295,6 +292,8 @@ const VistaPrincipal = () => {
           productoSeleccionado={productoSeleccionado}
           seccionEnUso={seccionEnUso}
           categoriaSeleccionada={categoriaSeleccionada}
+          setMostrarDialogoCarga={setMostrarDialogoCarga}
+          setActualizarProducto={setActualizarProductos}
         />
       }
       {<DialogoCarga open={mostrarDialogoCarga} />}

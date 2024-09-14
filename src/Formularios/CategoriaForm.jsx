@@ -8,16 +8,16 @@ import {
   Button,
 } from "@mui/material";
 import { useEffect } from "react";
-
 import { createCategoria, updateCategoria } from "../servicios/api";
 
 const CategoriaForm = ({
   open,
-  onClose,
-  categoria,
+  onClose,  
   modoEdicion,
-  formData,
-  setFormData,
+  categoriaSeleccionada,
+  setCategoriaSeleccionada,
+  setActualizarCategorias,
+  setMostrarDialogoCarga,
 }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,34 +27,41 @@ const CategoriaForm = ({
       (name === "nombre" && value?.length <= 49) ||
       (name === "descripcion" && value?.length <= 99)
     ) {
-      setFormData({
-        ...formData,
+      setCategoriaSeleccionada({
+        ...categoriaSeleccionada,
         [name]: value,
       });
     }
   };
 
   const handleSubmit = async (e) => {
+    setMostrarDialogoCarga();
     e.preventDefault();
     if (modoEdicion === "INSERTAR") {
-      await createCategoria(formData);
+      await createCategoria(categoriaSeleccionada);
     } else if (modoEdicion === "EDITAR") {
-      await updateCategoria(formData);
+      await updateCategoria(categoriaSeleccionada);
     }
     onClose();
+    setActualizarCategorias(true);
   };
+
+  useEffect(() => {
+    console.log("categoriaSeleccionada");
+    console.log(categoriaSeleccionada);
+  }, [categoriaSeleccionada]);
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        {categoria ? "Editar categoria" : "Crear categoria"}
+        {modoEdicion ? "Editar categoria" : "Crear categoria"}
       </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Nombre"
             name="nombre"
-            value={formData.nombre}
+            value={categoriaSeleccionada.nombre}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -63,7 +70,7 @@ const CategoriaForm = ({
           <TextField
             label="Descripcion"
             name="descripcion"
-            value={formData.descripcion}
+            value={categoriaSeleccionada.descripcion}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -73,7 +80,7 @@ const CategoriaForm = ({
             <TextField
               label="Fecha Creacion"
               name="fechaCreacion"
-              value={formData.fechaCreacion}
+              value={categoriaSeleccionada.fechaCreacion}
               onChange={handleChange}
               fullWidth
               disabled={true}
@@ -85,7 +92,9 @@ const CategoriaForm = ({
             <Button
               type="submit"
               color="primary"
-              disabled={formData?.nombre?.trim() === "" ? true : false}
+              disabled={
+                categoriaSeleccionada?.nombre?.trim() === "" ? true : false
+              }
               onClick={handleSubmit}
             >
               {modoEdicion === "INSERTAR" ? "Guardar" : "Editar"}
