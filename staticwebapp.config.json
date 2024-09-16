@@ -2,12 +2,12 @@
   "trailingSlash": "auto",
   "routes": [
     {
-      "route": "/productos",
+      "route": "/productos/",
       "methods": ["GET", "PUT", "POST", "DELETE"],
       "allowedRoles": ["anonymous", "authenticated"]
     },
     {
-      "route": "/categorias",
+      "route": "/categorias/",
       "methods": ["GET", "PUT", "POST", "DELETE"],
       "allowedRoles": ["anonymous", "authenticated"]
     },
