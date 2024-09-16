@@ -153,12 +153,12 @@ const ProductoForm = ({
                       const reader = new FileReader();
                       reader.readAsDataURL(file);
                       reader.onload = () => {
-                        const base64String = reader.result.split(",")[1]; // Get Base64 string
                         const nuevoproductoSeleccionado = {
                           ...productoSeleccionado,
                         };
                         nuevoproductoSeleccionado.imagen = file;
-                        nuevoproductoSeleccionado.imagenUrl = base64String;
+                        nuevoproductoSeleccionado.imagenUrl =
+                          URL.createObjectURL(file);
                         setProductoSeleccionado(nuevoproductoSeleccionado);
                       };
                     }
@@ -173,11 +173,7 @@ const ProductoForm = ({
               >
                 {productoSeleccionado?.imagenUrl ? (
                   <img
-                    src={
-                      productoSeleccionado?.imagen
-                        ? `data:image/jpeg;base64,${productoSeleccionado?.imagenUrl}`
-                        : productoSeleccionado?.imagenUrl
-                    }
+                    src={productoSeleccionado?.imagenUrl}
                     alt={`${productoSeleccionado.nombre}`}
                     style={{ width: "100px", height: "100%" }}
                   />

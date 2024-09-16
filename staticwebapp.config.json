@@ -23,7 +23,7 @@
     }    
   },
   "globalHeaders": {    
-    "Content-Security-Policy": "default-src 'self' https:; img-src 'self' data: https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:;"
+    "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
   },
   "mimeTypes": {
     ".json": "text/json"
