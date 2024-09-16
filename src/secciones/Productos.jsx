@@ -22,12 +22,12 @@ const Productos = ({
   return (
     <div
       style={{
-        height: "calc(72.5vh)",
+        height: "calc(77vh)",
         width: "calc(100vw - 2vw)",
-        padding: "1vh 1vw",
+        padding: "0 1vw",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start",
       }}
     >
       {productos?.length > 0 ? (
@@ -60,19 +60,19 @@ const Productos = ({
                 }/${day.length === 1 ? "0" + day : day}`;
                 return (
                   <TableRow>
-                    <TableCell align="center">{producto.idProducto}</TableCell>
-                    <TableCell align="center">{producto.nombre}</TableCell>
+                    <TableCell align="center">{producto?.idProducto}</TableCell>
+                    <TableCell align="center">{producto?.nombre}</TableCell>
                     <TableCell align="center">
                       {producto.descripcion || "-"}
                     </TableCell>
                     <TableCell align="center">
-                      {producto.precio || "-"}
+                      {"$" + producto?.precio || "-"}
                     </TableCell>
                     <TableCell align="center">
                       {producto?.imagenUrl ? (
                         <img
                           src={producto?.imagenUrl}
-                          alt={`${producto.nombre}`}
+                          alt={`${producto?.nombre}`}
                           style={{ width: "100px", height: "auto" }}
                         />
                       ) : (
@@ -100,11 +100,11 @@ const Productos = ({
                           setProductoSeleccionado({
                             idProducto: producto?.idProducto,
                             nombre: producto?.nombre,
-                            descripcion: producto?.descripcion,
+                            descripcion: producto?.descripcion || "",
                             fechaCreacion: fecha,
-                            categorias: producto?.categorias,
-                            imagenUrl: producto?.imagenUrl,
-                            precio: producto?.precio,
+                            categorias: producto?.categorias || [],
+                            imagenUrl: producto?.imagenUrl || "",
+                            precio: producto?.precio || 0,
                           });
                           handleOpenForm(producto);
                         }}
@@ -118,11 +118,11 @@ const Productos = ({
                           setProductoSeleccionado({
                             idProducto: producto?.idProducto,
                             nombre: producto?.nombre,
-                            descripcion: producto?.descripcion,
+                            descripcion: producto?.descripcion || "",
                             fechaCreacion: fecha,
-                            categorias: producto?.categorias,
-                            imagenUrl: producto?.imagenUrl,
-                            precio: producto?.precio,
+                            categorias: producto?.categorias || [],
+                            imagenUrl: producto?.imagenUrl || "",
+                            precio: producto?.precio || 0,
                           });
                           setMostrarDialogoConfirmacion(true);
                         }}

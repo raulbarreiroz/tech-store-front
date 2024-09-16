@@ -21,12 +21,12 @@ const Categorias = ({
   return (
     <div
       style={{
-        height: "calc(72.5vh)",
+        height: "calc(77vh)",
         width: "calc(100vw - 2vw)",
         padding: "1vh 1vw",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start",
       }}
     >
       {categorias?.length > 0 ? (

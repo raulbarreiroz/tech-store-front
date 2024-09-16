@@ -11,7 +11,6 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-
 import { Chip, Stack } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { createProducto, updateProducto } from "../servicios/api";
@@ -46,7 +45,7 @@ const ProductoForm = ({
     ) {
       setProductoSeleccionado({
         ...productoSeleccionado,
-        [name]: value,
+        [name]: value.trim(),
       });
     }
   };
@@ -105,7 +104,6 @@ const ProductoForm = ({
             onChange={handleChange}
             fullWidth
             margin="normal"
-            helperText={"El nombre es obligatorio"}
           />
           <TextField
             label="Descripcion"
@@ -118,21 +116,20 @@ const ProductoForm = ({
           />
           <Box display="flex" gap={2} alignItems="center">
             <TextField
-              label="Precio"
+              label="Precio (en dólares)"
               name="precio"
               value={productoSeleccionado?.precio}
               onChange={handleChange}
               fullWidth
               margin="normal"
               type="number"
-              inputProps={{
-                step: "0.01", // Controla los decimales
-              }}
-              style={{
-                width: "70%",
-              }}
+              placeholder={
+                isNaN(productoSeleccionado?.precio)
+                  ? "Debe ingresar un número correcto"
+                  : ""
+              }
+              style={{ width: "70%" }}
             />
-
             <div
               style={{
                 display: "flex",
@@ -282,7 +279,10 @@ const ProductoForm = ({
               type="submit"
               color="primary"
               disabled={
-                productoSeleccionado?.nombre?.trim() === "" ? true : false
+                productoSeleccionado?.nombre?.trim() === "" ||
+                isNaN(productoSeleccionado?.precio)
+                  ? true
+                  : false
               }
               onClick={handleSubmit}
             >

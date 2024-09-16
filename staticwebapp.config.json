@@ -2,14 +2,14 @@
   "trailingSlash": "auto",
   "routes": [
     {
-      "route": "/productos/",
+      "route": "api/productos/",
       "methods": ["GET", "PUT", "POST", "DELETE"],
-      "allowedRoles": ["anonymous", "authenticated"]
+      "allowedRoles": ["anonymous"]
     },
     {
-      "route": "/categorias/",
+      "route": "api/categorias/",
       "methods": ["GET", "PUT", "POST", "DELETE"],
-      "allowedRoles": ["anonymous", "authenticated"]
+      "allowedRoles": ["authenticated"]
     },
     {
       "route": "/",
@@ -22,8 +22,8 @@
       "redirect": "/"      
     }    
   },
-  "globalHeaders": {
-    "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+  "globalHeaders": {    
+    "Content-Security-Policy": "default-src 'self' https:; img-src 'self' data: https:; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:;"
   },
   "mimeTypes": {
     ".json": "text/json"

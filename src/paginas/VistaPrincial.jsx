@@ -156,7 +156,7 @@ const VistaPrincipal = () => {
             position="static"
             style={{
               height: "18vh",
-              margin: "0 0 5vh 0",
+              margin: "0 0 2vh 0",
             }}
           >
             <Toolbar
@@ -175,7 +175,7 @@ const VistaPrincipal = () => {
                 component={Link}
                 to="/productos"
                 onClick={(e) => {
-                  setActualizarProductos(true);                  
+                  setActualizarProductos(true);
                 }}
               >
                 Productos
@@ -189,7 +189,7 @@ const VistaPrincipal = () => {
                 component={Link}
                 to="/categorias"
                 onClick={(e) => {
-                  setActualizarCategorias(true);                  
+                  setActualizarCategorias(true);
                 }}
               >
                 Categorías
