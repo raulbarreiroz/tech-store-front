@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ImageNotSupportedIcon from "@mui/icons-material/ImageNotSupported";
 import AddIcon from "@mui/icons-material/Add";
+import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 
 const ProductoForm = ({
   open,
@@ -34,6 +35,9 @@ const ProductoForm = ({
     console.log(productoSeleccionado);
   }, [productoSeleccionado]);
 
+  const REGEXDECIMAL = /^(0|[1-9]\d*)(\.\d+)?$/;
+  const REGEXINTEGER = /^[1-9]\d*|0$/;
+
   const imagenInputRef = useRef(undefined);
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,7 +49,7 @@ const ProductoForm = ({
     ) {
       setProductoSeleccionado({
         ...productoSeleccionado,
-        [name]: value.trim(),
+        [name]: name === "precio" || name === "cantidad" ? value.trim() : value,
       });
     }
   };
@@ -104,7 +108,13 @@ const ProductoForm = ({
             onChange={handleChange}
             fullWidth
             margin="normal"
+            required
           />
+          {!productoSeleccionado?.nombre && (
+            <Typography style={{ marginTop: "-8px", color: "red" }}>
+              Debe ingresar un nombre
+            </Typography>
+          )}
           <TextField
             label="Descripcion"
             name="descripcion"
@@ -115,27 +125,98 @@ const ProductoForm = ({
             multiline={true}
           />
           <Box display="flex" gap={2} alignItems="center">
-            <TextField
-              label="Precio (en dólares)"
-              name="precio"
-              value={productoSeleccionado?.precio}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              type="number"
-              placeholder={
-                isNaN(productoSeleccionado?.precio)
-                  ? "Debe ingresar un número correcto"
-                  : ""
-              }
-              style={{ width: "70%" }}
-            />
+            <div style={{ width: "50%" }}>
+              <TextField
+                label="Precio (en dólares)"
+                name="precio"
+                value={productoSeleccionado?.precio}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                type="number"
+                InputProps={{ inputProps: { min: 0 } }}
+              />
+              <Typography
+                style={{
+                  fontSize: "small",
+                  marginTop: "-8px",
+                  color: "red",
+                  visibility: REGEXDECIMAL.test(productoSeleccionado?.precio)
+                    ? "hidden"
+                    : "visible",
+                }}
+              >
+                Debe ingresar una cantidad mayor a 0, permite decimal
+              </Typography>
+            </div>
+            <div style={{ width: "50%" }}>
+              <TextField
+                label="Cantidad"
+                name="cantidad"
+                value={productoSeleccionado?.cantidad}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                type="number"
+                InputProps={{ inputProps: { min: 0 } }}
+              />
+              <Typography
+                style={{
+                  fontSize: "small",
+                  marginTop: "-8px",
+                  color: "red",
+                  visibility: REGEXINTEGER.test(productoSeleccionado?.cantidad)
+                    ? "hidden"
+                    : "visible",
+                }}
+              >
+                Debe ingresar una cantidad mayor a 0, no permite decimal
+              </Typography>
+            </div>
+          </Box>
+          <Typography
+            style={{
+              borderTop: "1px solid lightgrey",
+              padding: "1vh 0",
+            }}
+          ></Typography>
+          <div
+            style={{
+              width: "100%",
+            }}
+          >
             <div
               style={{
                 display: "flex",
-                width: "30%",
-                justifyContent: "flex-end",
+                justifyContent: "center",
                 alignItems: "center",
+              }}
+            >
+              <IconButton
+                onClick={(e) => {
+                  imagenInputRef.current.click();
+                }}
+              >
+                {productoSeleccionado?.imagenUrl ? <EditIcon /> : <AddIcon />}
+              </IconButton>
+
+              <IconButton
+                disabled={productoSeleccionado?.imagenUrl ? false : true}
+                onClick={(e) => {
+                  setProductoSeleccionado({
+                    ...productoSeleccionado,
+                    imagenUrl: undefined,
+                    imagen: undefined,
+                  });
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
               }}
             >
               <div
@@ -192,37 +273,8 @@ const ProductoForm = ({
                   </div>
                 )}
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <IconButton
-                  onClick={(e) => {
-                    imagenInputRef.current.click();
-                  }}
-                >
-                  {productoSeleccionado?.imagenUrl ? <EditIcon /> : <AddIcon />}
-                </IconButton>
-
-                <IconButton
-                  disabled={productoSeleccionado?.imagenUrl ? false : true}
-                  onClick={(e) => {
-                    setProductoSeleccionado({
-                      ...productoSeleccionado,
-                      imagenUrl: undefined,
-                      imagen: undefined,
-                    });
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </div>
             </div>
-          </Box>
+          </div>
           {modoEdicion !== "INSERTAR" && (
             <TextField
               label="Fecha Creacion"
@@ -276,7 +328,8 @@ const ProductoForm = ({
               color="primary"
               disabled={
                 productoSeleccionado?.nombre?.trim() === "" ||
-                isNaN(productoSeleccionado?.precio)
+                !REGEXDECIMAL.test(productoSeleccionado?.precio) ||
+                !REGEXINTEGER.test(productoSeleccionado?.cantidad)
                   ? true
                   : false
               }

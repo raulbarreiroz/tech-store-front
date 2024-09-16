@@ -42,6 +42,7 @@ const Productos = ({
                 <TableCell align="center">Nombre</TableCell>
                 <TableCell align="center">Descripcion</TableCell>
                 <TableCell align="center">Precio</TableCell>
+                <TableCell align="center">Cantidad</TableCell>
                 <TableCell align="center">Imagen</TableCell>
                 <TableCell align="center">Categorias</TableCell>
                 <TableCell align="center">Fecha Creacion</TableCell>
@@ -68,6 +69,7 @@ const Productos = ({
                     <TableCell align="center">
                       {"$" + producto?.precio || "-"}
                     </TableCell>
+                    <TableCell align="center">{producto?.cantidad}</TableCell>
                     <TableCell align="center">
                       {producto?.imagenUrl ? (
                         <img
@@ -105,6 +107,7 @@ const Productos = ({
                             categorias: producto?.categorias || [],
                             imagenUrl: producto?.imagenUrl || "",
                             precio: producto?.precio || 0,
+                            cantidad: producto?.cantidad || 0,
                           });
                           handleOpenForm(producto);
                         }}
@@ -123,6 +126,7 @@ const Productos = ({
                             categorias: producto?.categorias || [],
                             imagenUrl: producto?.imagenUrl || "",
                             precio: producto?.precio || 0,
+                            cantidad: producto?.cantidad || 0,
                           });
                           setMostrarDialogoConfirmacion(true);
                         }}

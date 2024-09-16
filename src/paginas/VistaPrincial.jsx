@@ -52,6 +52,7 @@ const VistaPrincipal = () => {
       imagenUrl: undefined,
       precio: 0,
       categorias: [],
+      cantidad: 0
     });
   }
 
