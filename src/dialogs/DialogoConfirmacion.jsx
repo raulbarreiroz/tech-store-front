@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { deleteProducto } from "../servicios/api";
 import { deleteCategoria } from "../servicios/api";
+import { SetMealOutlined } from "@mui/icons-material";
 
 const DialogConfirmacion = ({
   open,
@@ -16,6 +17,7 @@ const DialogConfirmacion = ({
   seccionEnUso,
   categoriaSeleccionada,
   setMostrarDialogoCarga,
+  setMostrarDialogoConfirmacion,
 }) => {
   const handleConfirmDelete = (e) => {
     setMostrarDialogoCarga(true);
@@ -23,8 +25,6 @@ const DialogConfirmacion = ({
     if (seccionEnUso === "PRODUCTOS") {
       deleteProducto(productoSeleccionado);
     } else if (seccionEnUso === "CATEGORIAS") {
-      console.log("deleting categoria");
-      console.log(categoriaSeleccionada);
       deleteCategoria(categoriaSeleccionada);
     }
 
@@ -40,7 +40,12 @@ const DialogConfirmacion = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button
+          onClick={(e) => {
+            setMostrarDialogoConfirmacion(false);
+          }}
+          color="primary"
+        >
           Cancelar
         </Button>
         <Button onClick={handleConfirmDelete} color="error">

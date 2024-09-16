@@ -1,5 +1,5 @@
 // src/components/productoSeleccionadoForm.js
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -30,7 +30,12 @@ const ProductoForm = ({
   setMostrarDialogoCarga,
   setActualizarProductos,
 }) => {
-  const imagenInputRef = useRef(undefined);  
+  useEffect(() => {
+    console.log("producto seleccionado");
+    console.log(productoSeleccionado);
+  }, [productoSeleccionado]);
+
+  const imagenInputRef = useRef(undefined);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -64,7 +69,7 @@ const ProductoForm = ({
   };
 
   const handleChipClick = (chip) => {
-    const antiguoproductoSeleccionado = { ...productoSeleccionado };    
+    const antiguoproductoSeleccionado = { ...productoSeleccionado };
 
     let nuevasCategorias = antiguoproductoSeleccionado?.categorias || [];
     if (
@@ -155,7 +160,8 @@ const ProductoForm = ({
                         const nuevoproductoSeleccionado = {
                           ...productoSeleccionado,
                         };
-                        nuevoproductoSeleccionado.imagen = base64String;
+                        nuevoproductoSeleccionado.imagen = file;
+                        nuevoproductoSeleccionado.imagenUrl = base64String;
                         setProductoSeleccionado(nuevoproductoSeleccionado);
                       };
                     }
@@ -168,10 +174,14 @@ const ProductoForm = ({
                   height: "79px",
                 }}
               >
-                {productoSeleccionado?.imagen ? (
+                {productoSeleccionado?.imagenUrl ? (
                   <img
-                    src={`data:image/jpeg;base64,${productoSeleccionado.imagen}`}
-                    alt={`${productoSeleccionado.imagen}`}
+                    src={
+                      productoSeleccionado?.imagen
+                        ? `data:image/jpeg;base64,${productoSeleccionado?.imagenUrl}`
+                        : productoSeleccionado?.imagenUrl
+                    }
+                    alt={`${productoSeleccionado.nombre}`}
                     style={{ width: "100px", height: "100%" }}
                   />
                 ) : (
@@ -202,15 +212,16 @@ const ProductoForm = ({
                     imagenInputRef.current.click();
                   }}
                 >
-                  {productoSeleccionado?.imagen ? <EditIcon /> : <AddIcon />}
+                  {productoSeleccionado?.imagenUrl ? <EditIcon /> : <AddIcon />}
                 </IconButton>
 
                 <IconButton
-                  disabled={productoSeleccionado?.imagen ? false : true}
+                  disabled={productoSeleccionado?.imagenUrl ? false : true}
                   onClick={(e) => {
                     setProductoSeleccionado({
                       ...productoSeleccionado,
-                      imagen: "",
+                      imagenUrl: undefined,
+                      imagen: undefined,
                     });
                   }}
                 >

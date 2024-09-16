@@ -69,10 +69,10 @@ const Productos = ({
                       {producto.precio || "-"}
                     </TableCell>
                     <TableCell align="center">
-                      {producto?.imagen ? (
+                      {producto?.imagenUrl ? (
                         <img
-                          src={`data:image/jpeg;base64,${producto.imagen}`}
-                          alt={`${producto.imagen}`}
+                          src={producto?.imagenUrl}
+                          alt={`${producto.nombre}`}
                           style={{ width: "100px", height: "auto" }}
                         />
                       ) : (
@@ -103,7 +103,7 @@ const Productos = ({
                             descripcion: producto?.descripcion,
                             fechaCreacion: fecha,
                             categorias: producto?.categorias,
-                            imagen: producto?.imagen,
+                            imagenUrl: producto?.imagenUrl,
                             precio: producto?.precio,
                           });
                           handleOpenForm(producto);
@@ -121,7 +121,7 @@ const Productos = ({
                             descripcion: producto?.descripcion,
                             fechaCreacion: fecha,
                             categorias: producto?.categorias,
-                            imagen: producto?.imagen,
+                            imagenUrl: producto?.imagenUrl,
                             precio: producto?.precio,
                           });
                           setMostrarDialogoConfirmacion(true);

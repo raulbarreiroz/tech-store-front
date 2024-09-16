@@ -7,12 +7,11 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useEffect } from "react";
 import { createCategoria, updateCategoria } from "../servicios/api";
 
 const CategoriaForm = ({
   open,
-  onClose,  
+  onClose,
   modoEdicion,
   categoriaSeleccionada,
   setCategoriaSeleccionada,
@@ -45,11 +44,6 @@ const CategoriaForm = ({
     onClose();
     setActualizarCategorias(true);
   };
-
-  useEffect(() => {
-    console.log("categoriaSeleccionada");
-    console.log(categoriaSeleccionada);
-  }, [categoriaSeleccionada]);
 
   return (
     <Dialog open={open} onClose={onClose}>

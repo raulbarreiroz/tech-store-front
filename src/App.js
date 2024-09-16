@@ -4,7 +4,7 @@ import "./App.css";
 import VistaPrincipal from "./paginas/VistaPrincial";
 
 function App() {
-  return <VistaPrincipal />;
+  return (<VistaPrincipal />);
 }
 
 export default App;

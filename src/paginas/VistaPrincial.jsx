@@ -1,9 +1,4 @@
-import {
-  Route,
-  BrowserRouter as Router,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Productos from "../secciones/Productos";
 import Categorias from "../secciones/Categorias";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
@@ -16,12 +11,14 @@ import { fetchCategorias } from "../servicios/api";
 import { fetchProductos } from "../servicios/api";
 import DialogConfirmacion from "../dialogs/DialogoConfirmacion";
 import DialogoCarga from "../dialogs/DialogoCarga";
+import Enrutador from "../rutas/Enrutador";
+
 import CategoriaForm from "../Formularios/CategoriaForm";
 
 const VistaPrincipal = () => {
   const [actualizarProductos, setActualizarProductos] = useState(true);
   const [actualizarCategorias, setActualizarCategorias] = useState(true);
-  const [seccionEnUso, setSeccionEnUso] = useState("PRODUCTOS");
+  const [seccionEnUso, setSeccionEnUso] = useState(undefined);
   const [modoEdicion, setModoEdicion] = useState("INSERTAR");
   const [isFormProductoOpen, setisFormProductoOpen] = useState(false);
   const [isFormCategoriaOpen, setisFormCategoriaOpen] = useState(false);
@@ -38,7 +35,7 @@ const VistaPrincipal = () => {
     nombre: "",
     descripcion: "",
     fechaCreacion: undefined,
-    imagen: undefined,
+    imagenUrl: undefined,
     precio: 0,
     categorias: [],
   });
@@ -52,7 +49,7 @@ const VistaPrincipal = () => {
       nombre: "",
       descripcion: "",
       fechaCreacion: undefined,
-      imagen: undefined,
+      imagenUrl: undefined,
       precio: 0,
       categorias: [],
     });
@@ -66,11 +63,6 @@ const VistaPrincipal = () => {
       fechaCreacion: undefined,
     });
   }
-
-  useEffect(() => {
-    console.log("actualizarProductos");
-    console.log(actualizarProductos);
-  }, [actualizarProductos]);
 
   useEffect(() => {
     const getProductos = async () => {
@@ -157,9 +149,9 @@ const VistaPrincipal = () => {
   };
 
   return (
-    <div id="main-id">
-      <div id="cuerpo-id">
-        <Router>
+    <Router>
+      <div id="main-id">
+        <div id="cuerpo-id">
           <AppBar
             position="static"
             style={{
@@ -183,8 +175,7 @@ const VistaPrincipal = () => {
                 component={Link}
                 to="/productos"
                 onClick={(e) => {
-                  setActualizarProductos(true);
-                  setSeccionEnUso("PRODUCTOS");
+                  setActualizarProductos(true);                  
                 }}
               >
                 Productos
@@ -198,8 +189,7 @@ const VistaPrincipal = () => {
                 component={Link}
                 to="/categorias"
                 onClick={(e) => {
-                  setActualizarCategorias(true);
-                  setSeccionEnUso("CATEGORIAS");
+                  setActualizarCategorias(true);                  
                 }}
               >
                 Categorías
@@ -256,48 +246,67 @@ const VistaPrincipal = () => {
                 />
               }
             />
-            <Route path="/" element={<Navigate to="/productos" />} />
+            <Route
+              path="/"
+              element={
+                <Productos
+                  isFormProductoOpen={isFormProductoOpen}
+                  setisFormProductoOpen={setisFormProductoOpen}
+                  setProductoSeleccionado={setProductoSeleccionado}
+                  handleOpenForm={handleOpenForm}
+                  productoSeleccionado={productoSeleccionado}
+                  productos={productos}
+                  setModoEdicion={setModoEdicion}
+                  setMostrarDialogoConfirmacion={setMostrarDialogoConfirmacion}
+                />
+              }
+            />
           </Routes>
-        </Router>
+        </div>
+        {
+          <ProductoForm
+            open={isFormProductoOpen}
+            onClose={handleCloseFormProducto}
+            productoSeleccionado={productoSeleccionado}
+            setProductoSeleccionado={setProductoSeleccionado}
+            categorias={categorias}
+            modoEdicion={modoEdicion}
+            setProducto={setProductoSeleccionado}
+            setMostrarDialogoCarga={setMostrarDialogoCarga}
+            setActualizarProductos={setActualizarProductos}
+          />
+        }
+        {
+          <CategoriaForm
+            open={isFormCategoriaOpen}
+            onClose={handleCloseFormCategoria}
+            categorias={categorias}
+            modoEdicion={modoEdicion}
+            categoriaSeleccionada={categoriaSeleccionada}
+            setCategoriaSeleccionada={setCategoriaSeleccionada}
+            setActualizarCategorias={setActualizarCategorias}
+            setMostrarDialogoCarga={setMostrarDialogoCarga}
+          />
+        }
+        {
+          <DialogConfirmacion
+            open={mostrarDialogoConfirmacion}
+            handleClose={handleCloseDialogoConfirmacion}
+            productoSeleccionado={productoSeleccionado}
+            seccionEnUso={seccionEnUso}
+            categoriaSeleccionada={categoriaSeleccionada}
+            setMostrarDialogoCarga={setMostrarDialogoCarga}
+            setMostrarDialogoConfirmacion={setMostrarDialogoConfirmacion}
+            setActualizarProducto={setActualizarProductos}
+          />
+        }
+        {<DialogoCarga open={mostrarDialogoCarga} />}
       </div>
-      {
-        <ProductoForm
-          open={isFormProductoOpen}
-          onClose={handleCloseFormProducto}
-          productoSeleccionado={productoSeleccionado}
-          setProductoSeleccionado={setProductoSeleccionado}
-          categorias={categorias}
-          modoEdicion={modoEdicion}
-          setProducto={setProductoSeleccionado}
-          setMostrarDialogoCarga={setMostrarDialogoCarga}
-          setActualizarProductos={setActualizarProductos}
-        />
-      }
-      {
-        <CategoriaForm
-          open={isFormCategoriaOpen}
-          onClose={handleCloseFormCategoria}
-          categorias={categorias}
-          modoEdicion={modoEdicion}
-          categoriaSeleccionada={categoriaSeleccionada}
-          setCategoriaSeleccionada={setCategoriaSeleccionada}
-          setActualizarCategorias={setActualizarCategorias}
-          setMostrarDialogoCarga={setMostrarDialogoCarga}
-        />
-      }
-      {
-        <DialogConfirmacion
-          open={mostrarDialogoConfirmacion}
-          handleClose={handleCloseDialogoConfirmacion}
-          productoSeleccionado={productoSeleccionado}
-          seccionEnUso={seccionEnUso}
-          categoriaSeleccionada={categoriaSeleccionada}
-          setMostrarDialogoCarga={setMostrarDialogoCarga}
-          setActualizarProducto={setActualizarProductos}
-        />
-      }
-      {<DialogoCarga open={mostrarDialogoCarga} />}
-    </div>
+      <Enrutador
+        seccionEnUso={seccionEnUso}
+        setSeccionEnUso={setSeccionEnUso}
+      />
+    </Router>
   );
 };
 

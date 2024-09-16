@@ -1,29 +1,27 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL //http://localhost:3001/producto/41;
-console.log(process.env);
-console.log(API_URL);
+const API_URL = "http://localhost:3001"; /*process.env.REACT_APP_API_URL;*/
 
 export const fetchProductos = async () => {
   const response = await axios.get(`${API_URL}/producto/activo`);
   return response?.data;
 };
 
-const crearCategorias = async (categorias, idProducto) => {
-  for (const categoria of categorias) {
-    await axios?.post(`${API_URL}/relacion`, {
-      idProducto: idProducto,
-      idCategoria: categoria?.idCategoria,
-    });
-  }
-};
-
 export const createProducto = async (producto) => {
   try {
-    const response = await axios?.post(`${API_URL}/producto`, producto);
+    if (producto?.base64Imagen) {
+      delete producto.base64Imagen;
+    }
+    const response = await axios?.post(
+      `${API_URL}/producto`,
+      { ...producto },
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+
     const nuevoProducto = response.data;
-    const categorias = producto?.categorias;
-    await crearCategorias(categorias, nuevoProducto?.idProducto);
+    return nuevoProducto;
   } catch (err) {
     console.log("Error al momento de crear producto:" + err);
   }
@@ -31,11 +29,13 @@ export const createProducto = async (producto) => {
 
 export const updateProducto = async (producto) => {
   try {
+    if (producto?.imagen) {
+      delete producto.imagenUrl;
+    }
     const idProducto = producto?.idProducto;
-    await axios?.put(`${API_URL}/producto/${idProducto}`, producto);
-    const categorias = producto?.categorias;
-    await axios?.delete(`${API_URL}/relacion/producto/${idProducto}`);
-    await crearCategorias(categorias, idProducto);
+    await axios?.put(`${API_URL}/producto/${idProducto}`, producto, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (err) {
     console.log(err);
   }
