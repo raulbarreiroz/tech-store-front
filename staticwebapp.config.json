@@ -1,9 +1,31 @@
 {
+  "trailingSlash": "auto",
   "routes": [
- 
     {
-      "route": "/*",
-      "serve": "/index.html"
+      "route": "/productos",
+      "methods": ["GET", "PUT", "POST", "DELETE"],
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/categorias",
+      "methods": ["GET", "PUT", "POST", "DELETE"],
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/",
+      "methods": ["GET", "PUT", "POST", "DELETE"],
+      "allowedRoles": ["anonymous", "authenticated"]
     }
-  ]
+  ],
+  "responseOverrides": {    
+    "404": {
+      "redirect": "/"      
+    }    
+  },
+  "globalHeaders": {
+    "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+  },
+  "mimeTypes": {
+    ".json": "text/json"
+  }
 }
